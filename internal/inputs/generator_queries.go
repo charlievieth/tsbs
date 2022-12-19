@@ -35,9 +35,14 @@ type DevopsGeneratorMaker interface {
 	NewDevops(start, end time.Time, scale int) (queryUtils.QueryGenerator, error)
 }
 
-// IoTGeneratorMaker creates a quert generator for iot use case
+// IoTGeneratorMaker creates a query generator for iot use case
 type IoTGeneratorMaker interface {
 	NewIoT(start, end time.Time, scale int) (queryUtils.QueryGenerator, error)
+}
+
+// IntelGeneratorMaker creates a query generator for intel use case
+type IntelGeneratorMaker interface {
+	NewIntel(start, end time.Time, scale int) (queryUtils.QueryGenerator, error)
 }
 
 // QueryGenerator is a type of Generator for creating queries to test against a

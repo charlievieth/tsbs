@@ -5,6 +5,7 @@ import (
 	"github.com/timescale/tsbs/internal/utils"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
 	"github.com/timescale/tsbs/pkg/data/usecases/devops"
+	"github.com/timescale/tsbs/pkg/data/usecases/intel"
 	"github.com/timescale/tsbs/pkg/data/usecases/iot"
 	"math"
 )
@@ -76,6 +77,16 @@ func GetSimulatorConfig(dgc *common.DataGeneratorConfig) (common.SimulatorConfig
 				MaxMetricCount:  dgc.MaxMetricCountPerHost,
 			},
 		}
+	case common.UseCaseIntel:
+		ret = &intel.IntelSimulatorConfig{
+			Start: tsStart,
+			End:   tsEnd,
+
+			InitHostCount:   dgc.InitialScale,
+			HostCount:       dgc.Scale,
+			HostConstructor: intel.NewHostIntel,
+		}
+
 	default:
 		err = fmt.Errorf("unknown use case: '%s'", dgc.Use)
 	}

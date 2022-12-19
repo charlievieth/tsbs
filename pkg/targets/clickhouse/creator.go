@@ -68,7 +68,7 @@ func (d *dbCreator) RemoveOldDB(dbName string) error {
 func (d *dbCreator) CreateDB(dbName string) error {
 	// Connect to ClickHouse in general and CREATE DATABASE
 	db := sqlx.MustConnect(dbType, getConnectString(d.config, false))
-	sql := fmt.Sprintf("CREATE DATABASE %s", dbName)
+	sql := fmt.Sprintf("CREATE DATABASE %s ON CLUSTER '{cluster}'", dbName)
 	_, err := db.Exec(sql)
 	if err != nil {
 		panic(err)
@@ -136,14 +136,16 @@ func createMetricsTable(conf *ClickhouseConfig, db *sqlx.DB, tableName string, f
 	}
 
 	sql := fmt.Sprintf(`
-			CREATE TABLE %s (
+			CREATE TABLE IF NOT EXISTS %s ON CLUSTER '{cluster}' (
 				created_date    Date     DEFAULT today(),
 				created_at      DateTime DEFAULT now(),
 				time            String,
 				tags_id         UInt32,
 				%s,
 				additional_tags String   DEFAULT ''
-			) ENGINE = MergeTree(created_date, (tags_id, created_at), 8192)
+			) ENGINE = ReplicatedMergeTree
+			PARTITION BY toYYYYMM(created_date)
+			ORDER BY (tags_id, created_at);
 			`,
 		tableName,
 		strings.Join(columnsWithType, ","))
@@ -172,17 +174,14 @@ func generateTagsTableQuery(tagNames, tagTypes []string) string {
 
 	cols := strings.Join(tagColumnDefinitions, ",\n")
 
-	index := "id"
-
 	return fmt.Sprintf(
-		"CREATE TABLE tags(\n"+
-			"created_date Date     DEFAULT today(),\n"+
-			"created_at   DateTime DEFAULT now(),\n"+
-			"id           UInt32,\n"+
-			"%s"+
-			") ENGINE = MergeTree(created_date, (%s), 8192)",
-		cols,
-		index)
+		`CREATE TABLE IF NOT EXISTS tags ON CLUSTER '{cluster}' (
+			created_date Date     DEFAULT today(),
+			created_at   DateTime DEFAULT now(),
+			id           UInt32,
+			%s
+			) ENGINE = ReplicatedMergeTree PARTITION BY toYYYYMM(created_date) ORDER BY (id);`,
+		cols)
 }
 
 func serializedTypeToClickHouseType(serializedType string) string {

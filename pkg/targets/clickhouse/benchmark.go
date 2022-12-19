@@ -43,10 +43,10 @@ func getConnectString(conf *ClickhouseConfig, db bool) string {
 	// ClickHouse ex.:
 	// tcp://host1:9000?username=user&password=qwerty&database=clicks&read_timeout=10&write_timeout=20&alt_hosts=host2:9000,host3:9000
 	if db {
-		return fmt.Sprintf("tcp://%s:9000?username=%s&password=%s&database=%s", conf.Host, conf.User, conf.Password, conf.DbName)
+		return fmt.Sprintf("tcp://%s:9440?username=%s&password=%s&database=%s&secure=true&skip_verify=false", conf.Host, conf.User, conf.Password, conf.DbName)
 	}
 
-	return fmt.Sprintf("tcp://%s:9000?username=%s&password=%s", conf.Host, conf.User, conf.Password)
+	return fmt.Sprintf("tcp://%s:9440?username=%s&password=%s&secure=true&skip_verify=false", conf.Host, conf.User, conf.Password)
 }
 
 // Point is a single row of data keyed by which table it belongs

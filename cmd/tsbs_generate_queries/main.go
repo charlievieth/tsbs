@@ -51,6 +51,7 @@ var useCaseMatrix = map[string]map[string]utils.QueryFillerMaker{
 		iot.LabelDailyActivity:                 iot.NewDailyTruckActivity,
 		iot.LabelBreakdownFrequency:            iot.NewTruckBreakdownFrequency,
 	},
+	"intel": {},
 }
 
 var conf = &config.QueryGeneratorConfig{}
