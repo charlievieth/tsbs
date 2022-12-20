@@ -10,11 +10,11 @@ import (
 var (
 	labelIntel  = []byte("intel") // heap optimization
 	intelFields = []common.LabeledDistributionMaker{
-		{Label: []byte("mongodb_asserts_regular"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
-		{Label: []byte("mongodb_asserts_rollovers"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
-		{Label: []byte("mongodb_asserts_user"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
-		{Label: []byte("mongodb_asserts_warning"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
-		{Label: []byte("mongodb_clusterTime_signature_keyId"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
+		{Label: []byte("mongodb_asserts_regular"), DistributionMaker: func() common.Distribution { return common.MWD(intelND, 0) }},
+		{Label: []byte("mongodb_asserts_rollovers"), DistributionMaker: func() common.Distribution { return common.MWD(intelND, 0) }},
+		{Label: []byte("mongodb_asserts_user"), DistributionMaker: func() common.Distribution { return common.MWD(intelND, 0) }},
+		{Label: []byte("mongodb_asserts_warning"), DistributionMaker: func() common.Distribution { return common.MWD(intelND, 0) }},
+		{Label: []byte("mongodb_clusterTime_signature_keyId"), DistributionMaker: func() common.Distribution { return common.MWD(intelND, 0) }},
 		{Label: []byte("mongodb_connections_active"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
 		{Label: []byte("mongodb_connections_available"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
 		{Label: []byte("mongodb_connections_awaitingTopologyChanges"), DistributionMaker: func() common.Distribution { return common.CWD(intelND, 0.0, 100.0, rand.Float64()*100.0) }},
