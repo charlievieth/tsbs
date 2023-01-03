@@ -4,6 +4,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 	"github.com/timescale/tsbs/pkg/query/config"
 	"os"
 	"time"
@@ -51,7 +52,10 @@ var useCaseMatrix = map[string]map[string]utils.QueryFillerMaker{
 		iot.LabelDailyActivity:                 iot.NewDailyTruckActivity,
 		iot.LabelBreakdownFrequency:            iot.NewTruckBreakdownFrequency,
 	},
-	"intel": {},
+	"intel": {
+		intel.LabelAllMetricsForHosts + "-1-1": intel.NewAllMetricsForHosts(1, 1*time.Hour),
+		intel.LabelLastPointPrimary:            intel.NewLastPointPrimary,
+	},
 }
 
 var conf = &config.QueryGeneratorConfig{}

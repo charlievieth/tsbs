@@ -201,6 +201,13 @@ func (g *QueryGenerator) getUseCaseGenerator(c *config.QueryGeneratorConfig) (qu
 		}
 
 		return devopsFactory.NewDevops(g.tsStart, g.tsEnd, scale)
+	case common.UseCaseIntel:
+		intelFactory, ok := factory.(IntelGeneratorMaker)
+		if !ok {
+			return nil, fmt.Errorf(errUseCaseNotImplementedFmt, c.Use, c.Format)
+		}
+
+		return intelFactory.NewIntel(g.tsStart, g.tsEnd, scale)
 	default:
 		return nil, fmt.Errorf(errUnknownUseCaseFmt, c.Use)
 	}
