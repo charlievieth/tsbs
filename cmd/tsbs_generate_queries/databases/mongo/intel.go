@@ -136,10 +136,7 @@ func (i *Intel) TopKHostsFromCluster(qi query.Query, nHosts int, duration time.D
 			"_id": "$tags.clusterName",
 			"topHosts": bson.M{
 				"$topN": bson.M{
-					"output": bson.A{
-						"$tags.hostname",
-						"$mongodb_extra_info_user_time_us",
-					},
+					"output": []string{"$tags.hostname", "$mongodb_extra_info_user_time_us"},
 					"sortBy": bson.M{
 						"mongodb_extra_info_user_time_us": -1,
 					},
