@@ -11,6 +11,8 @@ const (
 	// LabelAllMetricsForHosts is the label prefix for queries
 	LabelAllMetricsForHosts = "all-metrics-host"
 	LabelLastPointPrimary   = "last-point-primary-host"
+	LabelLastPointForHosts  = "last-point-host"
+	LabelTopKForCluster     = "topk-node"
 )
 
 // Core is the common component of all generators for all systems.
@@ -56,9 +58,16 @@ type AllMetricsFiller interface {
 	AllMetricsForHosts(query.Query, int, time.Duration)
 }
 
-// LastPointFiller is a type that can fill in a last point query
+type TopKHostsFromClusterFiller interface {
+	TopKHostsFromCluster(query.Query, int, time.Duration)
+}
+
 type LastPointFiller interface {
 	LastPointPrimary(query.Query)
+}
+
+type LastPointForHostsFiller interface {
+	LastPointForHosts(query.Query, int)
 }
 
 type MetadataType string

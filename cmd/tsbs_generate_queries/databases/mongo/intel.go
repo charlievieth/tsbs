@@ -83,7 +83,40 @@ func (i *Intel) LastPointPrimary(qi query.Query) {
 	q.HumanDescription = []byte(fmt.Sprintf("%s", humanLabel))
 }
 
-func (i *Intel) TopKHostsFromCluster(qi query.Query, duration time.Duration) {
+func (i *Intel) LastPointForHosts(qi query.Query, nHosts int) {
+	hostnames, err := i.GetRandomHosts(nHosts)
+	panicIfErr(err)
+
+	pipelineQuery := []bson.M{
+		{"$match": bson.M{
+			"tags.hostname": bson.M{
+				"$in": hostnames,
+			},
+		}},
+		{"$sort": bson.M{
+			"tags.hostname": 1,
+			"time":          -1,
+		}},
+		{"$group": bson.M{
+			"_id": "$tags.hostname",
+			"ts": bson.M{
+				"$first": "$time",
+			},
+			"mongodb_asserts_rollovers": bson.M{
+				"$first": "$mongodb_asserts_rollovers",
+			},
+		}},
+	}
+
+	humanLabel := fmt.Sprintf("Mongo last metric for %v hosts", nHosts)
+	q := qi.(*query.Mongo)
+	q.HumanLabel = []byte(humanLabel)
+	q.BsonDoc = pipelineQuery
+	q.CollectionName = []byte("point_data")
+	q.HumanDescription = []byte(fmt.Sprintf("%s", humanLabel))
+}
+
+func (i *Intel) TopKHostsFromCluster(qi query.Query, nHosts int, duration time.Duration) {
 	interval := i.Interval.MustRandWindow(duration)
 	clusterNames, err := i.GetRandomClusters(1)
 	panicIfErr(err)
@@ -110,13 +143,13 @@ func (i *Intel) TopKHostsFromCluster(qi query.Query, duration time.Duration) {
 					"sortBy": bson.M{
 						"mongodb_extra_info_user_time_us": -1,
 					},
-					"n": 10,
+					"n": nHosts,
 				},
 			},
 		}},
 	}
 
-	label := fmt.Sprintf("Mongo top 10 hosts for a cluster for %v hours", duration.Hours())
+	label := fmt.Sprintf("Mongo top %v hosts for a cluster for %v hours", nHosts, duration.Hours())
 	q := qi.(*query.Mongo)
 	q.HumanLabel = []byte(label)
 	q.BsonDoc = pipelineQuery

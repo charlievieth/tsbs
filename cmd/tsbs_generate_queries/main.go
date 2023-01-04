@@ -56,6 +56,8 @@ var useCaseMatrix = map[string]map[string]utils.QueryFillerMaker{
 		intel.LabelAllMetricsForHosts + "-1-1":  intel.NewAllMetricsForHosts(1, 1*time.Hour),
 		intel.LabelAllMetricsForHosts + "-1-48": intel.NewAllMetricsForHosts(1, 48*time.Hour),
 		intel.LabelLastPointPrimary:             intel.NewLastPointPrimary,
+		intel.LabelLastPointForHosts + "-30":    intel.NewLastPointForHosts(30),
+		intel.LabelTopKForCluster + "-10-1":     intel.NewTopKHostsFromCluster(10, 1*time.Hour),
 	},
 }
 
