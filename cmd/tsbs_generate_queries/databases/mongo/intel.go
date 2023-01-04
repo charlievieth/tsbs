@@ -55,6 +55,52 @@ func (i *Intel) AllMetricsForHosts(qi query.Query, nHosts int, duration time.Dur
 	q.HumanDescription = []byte(fmt.Sprintf("%s: start %s", label, interval.StartString()))
 }
 
+func (i *Intel) HourlyAvgMetricsForHosts(qi query.Query, numMetrics int, nHosts int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+	metrics, err := intel.GetIntelMetricsSlice(numMetrics)
+	panicIfErr(err)
+	hostnames, err := i.GetRandomHosts(nHosts)
+	panicIfErr(err)
+
+	pipelineQuery := []bson.M{
+		{
+			"$match": bson.M{
+				"tags.hostname": bson.M{
+					"$in": hostnames,
+				},
+				"time": bson.M{
+					"$gte": interval.Start(),
+					"$lt":  interval.End(),
+				},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"time": bson.M{
+						"$dateTrunc": bson.M{"date": "$time", "unit": "hour"},
+					},
+					"hostname": "$tags.hostname",
+				},
+			},
+		},
+		{
+			"$sort": bson.D{{"_id.time", 1}, {"_id.hostname", 1}},
+		},
+	}
+	resultMap := pipelineQuery[1]["$group"].(bson.M)
+	for _, metric := range metrics {
+		resultMap["avg_"+metric] = bson.M{"$avg": "$" + metric}
+	}
+
+	humanLabel := fmt.Sprintf("Mongo mean of %d metrics %v hosts for %v hours", numMetrics, nHosts, duration.Hours())
+	q := qi.(*query.Mongo)
+	q.HumanLabel = []byte(humanLabel)
+	q.BsonDoc = pipelineQuery
+	q.CollectionName = []byte("point_data")
+	q.HumanDescription = []byte(fmt.Sprintf("%s: %s (%s)", humanLabel, interval.StartString(), q.CollectionName))
+}
+
 func (i *Intel) LastPointPrimary(qi query.Query) {
 	pipelineQuery := []bson.M{
 		{"$sort": bson.M{
@@ -147,6 +193,45 @@ func (i *Intel) TopKHostsFromCluster(qi query.Query, nHosts int, duration time.D
 	}
 
 	label := fmt.Sprintf("Mongo top %v hosts for a cluster for %v hours", nHosts, duration.Hours())
+	q := qi.(*query.Mongo)
+	q.HumanLabel = []byte(label)
+	q.BsonDoc = pipelineQuery
+	q.CollectionName = []byte("point_data")
+	q.HumanDescription = []byte(fmt.Sprintf("%s: start %s", label, interval.StartString()))
+}
+
+func (i *Intel) TopKPrimariesFromCluster(qi query.Query, nPrimaries int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+	clusterNames, err := i.GetRandomClusters(1)
+	panicIfErr(err)
+	pipelineQuery := []bson.M{
+		{
+			"$match": bson.M{
+				"tags.clusterName": bson.M{
+					"$in": clusterNames,
+				},
+				"time": bson.M{
+					"$gte": interval.Start(),
+					"$lt":  interval.End(),
+				},
+				"tags.replicaSetState": "PRIMARY",
+			},
+		},
+		{"$group": bson.M{
+			"_id": "$tags.clusterName",
+			"topHosts": bson.M{
+				"$topN": bson.M{
+					"output": []string{"$tags.hostname", "$mongodb_extra_info_user_time_us"},
+					"sortBy": bson.M{
+						"mongodb_extra_info_user_time_us": -1,
+					},
+					"n": nPrimaries,
+				},
+			},
+		}},
+	}
+
+	label := fmt.Sprintf("Mongo top %v primaries for a cluster for %v hours", nPrimaries, duration.Hours())
 	q := qi.(*query.Mongo)
 	q.HumanLabel = []byte(label)
 	q.BsonDoc = pipelineQuery
