@@ -53,8 +53,9 @@ var useCaseMatrix = map[string]map[string]utils.QueryFillerMaker{
 		iot.LabelBreakdownFrequency:            iot.NewTruckBreakdownFrequency,
 	},
 	"intel": {
-		intel.LabelAllMetricsForHosts + "-1-1": intel.NewAllMetricsForHosts(1, 1*time.Hour),
-		intel.LabelLastPointPrimary:            intel.NewLastPointPrimary,
+		intel.LabelAllMetricsForHosts + "-1-1":  intel.NewAllMetricsForHosts(1, 1*time.Hour),
+		intel.LabelAllMetricsForHosts + "-1-48": intel.NewAllMetricsForHosts(1, 48*time.Hour),
+		intel.LabelLastPointPrimary:             intel.NewLastPointPrimary,
 	},
 }
 
