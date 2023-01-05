@@ -21,6 +21,7 @@ type ClickhouseConfig struct {
 	InTableTag bool
 	Debug      int
 	DbName     string
+	Clustered  bool
 }
 
 // String values of tags and fields to insert - string representation

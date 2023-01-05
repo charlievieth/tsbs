@@ -68,7 +68,10 @@ func (d *dbCreator) RemoveOldDB(dbName string) error {
 func (d *dbCreator) CreateDB(dbName string) error {
 	// Connect to ClickHouse in general and CREATE DATABASE
 	db := sqlx.MustConnect(dbType, getConnectString(d.config, false))
-	sql := fmt.Sprintf("CREATE DATABASE %s ON CLUSTER '{cluster}'", dbName)
+	sql := fmt.Sprintf("CREATE DATABASE %s", dbName)
+	if d.config.Clustered {
+		sql = fmt.Sprintf("CREATE DATABASE %s ON CLUSTER '{cluster}'", dbName)
+	}
 	_, err := db.Exec(sql)
 	if err != nil {
 		panic(err)
@@ -100,6 +103,9 @@ func (d *dbCreator) CreateDB(dbName string) error {
 // createTagsTable builds CREATE TABLE SQL statement and runs it
 func createTagsTable(conf *ClickhouseConfig, db *sqlx.DB, tagNames, tagTypes []string) {
 	sql := generateTagsTableQuery(tagNames, tagTypes)
+	if conf.Clustered {
+		sql = generateTagsTableQueryClustered(tagNames, tagTypes)
+	}
 	if conf.Debug > 0 {
 		fmt.Printf(sql)
 	}
@@ -136,6 +142,20 @@ func createMetricsTable(conf *ClickhouseConfig, db *sqlx.DB, tableName string, f
 	}
 
 	sql := fmt.Sprintf(`
+			CREATE TABLE %s (
+				created_date    Date     DEFAULT today(),
+				created_at      DateTime DEFAULT now(),
+				time            String,
+				tags_id         UInt32,
+				%s,
+				additional_tags String   DEFAULT ''
+			) ENGINE = MergeTree(created_date, (tags_id, created_at), 8192)
+			`,
+		tableName,
+		strings.Join(columnsWithType, ","))
+
+	if conf.Clustered {
+		sql = fmt.Sprintf(`
 			CREATE TABLE IF NOT EXISTS %s ON CLUSTER '{cluster}' (
 				created_date    Date     DEFAULT today(),
 				created_at      DateTime DEFAULT now(),
@@ -147,8 +167,10 @@ func createMetricsTable(conf *ClickhouseConfig, db *sqlx.DB, tableName string, f
 			PARTITION BY toYYYYMM(created_date)
 			ORDER BY (tags_id, created_at);
 			`,
-		tableName,
-		strings.Join(columnsWithType, ","))
+			tableName,
+			strings.Join(columnsWithType, ","))
+	}
+
 	if conf.Debug > 0 {
 		fmt.Printf(sql)
 	}
@@ -159,6 +181,34 @@ func createMetricsTable(conf *ClickhouseConfig, db *sqlx.DB, tableName string, f
 }
 
 func generateTagsTableQuery(tagNames, tagTypes []string) string {
+	// prepare COLUMNs specification for CREATE TABLE statement
+	// all columns would be of the type specified in the tags header
+	// e.g. tags, tag2 string,tag2 int32...
+	if len(tagNames) != len(tagTypes) {
+		panic("wrong number of tag names and tag types")
+	}
+	tagColumnDefinitions := make([]string, len(tagNames))
+	for i, tagName := range tagNames {
+		tagType := serializedTypeToClickHouseType(tagTypes[i])
+		tagColumnDefinitions[i] = fmt.Sprintf("%s %s", tagName, tagType)
+	}
+
+	cols := strings.Join(tagColumnDefinitions, ",\n")
+
+	index := "id"
+
+	return fmt.Sprintf(
+		"CREATE TABLE tags(\n"+
+			"created_date Date     DEFAULT today(),\n"+
+			"created_at   DateTime DEFAULT now(),\n"+
+			"id           UInt32,\n"+
+			"%s"+
+			") ENGINE = MergeTree(created_date, (%s), 8192)",
+		cols,
+		index)
+}
+
+func generateTagsTableQueryClustered(tagNames, tagTypes []string) string {
 	// prepare COLUMNs specification for CREATE TABLE statement
 	// all columns would be of the type specified in the tags header
 	// e.g. tags, tag2 string,tag2 int32...

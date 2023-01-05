@@ -45,6 +45,7 @@ func init() {
 		Password:   viper.GetString("password"),
 		LogBatches: viper.GetBool("log-batches"),
 		Debug:      viper.GetInt("debug"),
+		Clustered:  viper.GetBool("clustered"),
 		DbName:     loaderConf.DBName,
 	}
 
