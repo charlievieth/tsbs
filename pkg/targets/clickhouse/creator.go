@@ -149,7 +149,9 @@ func createMetricsTable(conf *ClickhouseConfig, db *sqlx.DB, tableName string, f
 				tags_id         UInt32,
 				%s,
 				additional_tags String   DEFAULT ''
-			) ENGINE = MergeTree(created_date, (tags_id, created_at), 8192)
+			) ENGINE = MergeTree
+			PARTITION BY toYYYYMM(created_date)
+			ORDER BY (tags_id, created_at);
 			`,
 		tableName,
 		strings.Join(columnsWithType, ","))
@@ -203,7 +205,7 @@ func generateTagsTableQuery(tagNames, tagTypes []string) string {
 			"created_at   DateTime DEFAULT now(),\n"+
 			"id           UInt32,\n"+
 			"%s"+
-			") ENGINE = MergeTree(created_date, (%s), 8192)",
+			") ENGINE = MergeTree PARTITION BY toYYYYMM(created_date) ORDER BY (id);",
 		cols,
 		index)
 }
