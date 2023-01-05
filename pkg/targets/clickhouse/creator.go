@@ -195,19 +195,18 @@ func generateTagsTableQuery(tagNames, tagTypes []string) string {
 		tagColumnDefinitions[i] = fmt.Sprintf("%s %s", tagName, tagType)
 	}
 
-	cols := strings.Join(tagColumnDefinitions, ",\n")
-
-	index := "id"
+	cols := strings.Join(tagColumnDefinitions, ", ")
 
 	return fmt.Sprintf(
-		"CREATE TABLE tags(\n"+
-			"created_date Date     DEFAULT today(),\n"+
-			"created_at   DateTime DEFAULT now(),\n"+
-			"id           UInt32,\n"+
-			"%s"+
-			") ENGINE = MergeTree PARTITION BY toYYYYMM(created_date) ORDER BY (id);",
-		cols,
-		index)
+		`CREATE TABLE tags(
+			created_date Date     DEFAULT today(),
+			created_at   DateTime DEFAULT now(),
+			id           UInt32,
+			%s
+			) ENGINE = MergeTree
+			PARTITION BY toYYYYMM(created_date)
+			ORDER BY (id);`,
+		cols)
 }
 
 func generateTagsTableQueryClustered(tagNames, tagTypes []string) string {
