@@ -13,11 +13,14 @@ const (
 
 	// LabelAllMetricsForHosts is the label prefix for queries
 	LabelAllMetricsForHosts      = "all-metrics-host"
+	LabelAllMetricsForCluster    = "all-metrics-cluster"
 	LabelLastPointPrimary        = "last-point-primary-host"
 	LabelLastPointForHosts       = "last-point-host"
 	LabelTopKHostsForCluster     = "topk-host"
 	LabelTopKPrimariesForCluster = "topk-primary"
 	LabelAvgMetricsForHosts      = "avg-metrics-host"
+	LabelClusterDailyAverage     = "cluster-daily-average"
+	LabelCounterRateHost         = "counter-rate-host"
 )
 
 // Core is the common component of all generators for all systems.
@@ -59,12 +62,24 @@ func (d *Core) GetRandomOrgs(nOrgs int) ([]string, error) {
 	return getRandomNameOfMetadataType(nOrgs, 100, Org)
 }
 
-type AllMetricsFiller interface {
+type AllMetricsForHostsFiller interface {
 	AllMetricsForHosts(query.Query, int, time.Duration)
+}
+
+type AllMetricsForClustersFiller interface {
+	AllMetricsForClusters(query.Query, int, time.Duration)
 }
 
 type HourlyAvgMetricsForHostsFiller interface {
 	HourlyAvgMetricsForHosts(query.Query, int, int, time.Duration)
+}
+
+type CounterRateHostFiller interface {
+	CounterRateHost(query.Query, int, time.Duration)
+}
+
+type HourlyAvgMetricsForClustersFiller interface {
+	HourlyAvgMetricsForClusters(query.Query, int, int, time.Duration)
 }
 
 type TopKHostsFromClusterFiller interface {

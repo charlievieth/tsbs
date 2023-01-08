@@ -7,17 +7,15 @@ import (
 	"time"
 )
 
-// AllMetricsPerHost returns QueryFiller for the intel all metrics no rollup usecase
-type AllMetricsPerHost struct {
+type CounterRateHost struct {
 	core     utils.QueryGenerator
 	hosts    int
 	duration time.Duration
 }
 
-// NewAllMetricsForHosts returns a new NewAllMetricsForHosts for given parameters
-func NewAllMetricsForHosts(hosts int, duration time.Duration) utils.QueryFillerMaker {
+func NewCounterRateHost(hosts int, duration time.Duration) utils.QueryFillerMaker {
 	return func(core utils.QueryGenerator) utils.QueryFiller {
-		return &AllMetricsPerHost{
+		return &CounterRateHost{
 			core:     core,
 			hosts:    hosts,
 			duration: duration,
@@ -26,11 +24,11 @@ func NewAllMetricsForHosts(hosts int, duration time.Duration) utils.QueryFillerM
 }
 
 // Fill fills in the query.Query with query details
-func (d *AllMetricsPerHost) Fill(q query.Query) query.Query {
-	fc, ok := d.core.(AllMetricsFiller)
+func (d *CounterRateHost) Fill(q query.Query) query.Query {
+	fc, ok := d.core.(CounterRateHostFiller)
 	if !ok {
 		common.PanicUnimplementedQuery(d.core)
 	}
-	fc.AllMetricsForHosts(q, d.hosts, d.duration)
+	fc.CounterRateHost(q, d.hosts, d.duration)
 	return q
 }

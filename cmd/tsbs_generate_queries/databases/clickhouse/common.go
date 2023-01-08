@@ -1,6 +1,7 @@
 package clickhouse
 
 import (
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 	"time"
 
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/devops"
@@ -41,4 +42,16 @@ func (g *BaseGenerator) NewDevops(start, end time.Time, scale int) (utils.QueryG
 	}
 
 	return devops, nil
+}
+
+func (g *BaseGenerator) NewIntel(start, end time.Time, scale int) (utils.QueryGenerator, error) {
+	core, err := intel.NewCore(start, end, scale)
+	if err != nil {
+		return nil, err
+	}
+
+	return &Intel{
+		BaseGenerator: g,
+		Core:          core,
+	}, nil
 }

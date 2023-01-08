@@ -55,6 +55,33 @@ func (i *Intel) AllMetricsForHosts(qi query.Query, nHosts int, duration time.Dur
 	q.HumanDescription = []byte(fmt.Sprintf("%s: start %s", label, interval.StartString()))
 }
 
+func (i *Intel) AllMetricsForClusters(qi query.Query, nClusters int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+	clusterNames, err := i.GetRandomClusters(nClusters)
+	panicIfErr(err)
+
+	pipelineQuery := []bson.M{
+		{
+			"$match": bson.M{
+				"tags.clusterName": bson.M{
+					"$in": clusterNames,
+				},
+				"time": bson.M{
+					"$gte": interval.Start(),
+					"$lt":  interval.End(),
+				},
+			},
+		},
+	}
+
+	label := fmt.Sprintf("Mongo all metrics for %v clusters for %v hours", nClusters, duration.Hours())
+	q := qi.(*query.Mongo)
+	q.HumanLabel = []byte(label)
+	q.BsonDoc = pipelineQuery
+	q.CollectionName = []byte("point_data")
+	q.HumanDescription = []byte(fmt.Sprintf("%s: start %s", label, interval.StartString()))
+}
+
 func (i *Intel) HourlyAvgMetricsForHosts(qi query.Query, numMetrics int, nHosts int, duration time.Duration) {
 	interval := i.Interval.MustRandWindow(duration)
 	metrics, err := intel.GetIntelMetricsSlice(numMetrics)
@@ -94,6 +121,52 @@ func (i *Intel) HourlyAvgMetricsForHosts(qi query.Query, numMetrics int, nHosts 
 	}
 
 	humanLabel := fmt.Sprintf("Mongo mean of %d metrics %v hosts for %v hours", numMetrics, nHosts, duration.Hours())
+	q := qi.(*query.Mongo)
+	q.HumanLabel = []byte(humanLabel)
+	q.BsonDoc = pipelineQuery
+	q.CollectionName = []byte("point_data")
+	q.HumanDescription = []byte(fmt.Sprintf("%s: %s (%s)", humanLabel, interval.StartString(), q.CollectionName))
+}
+
+func (i *Intel) HourlyAvgMetricsForClusters(qi query.Query, numMetrics int, nClusters int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+	metrics, err := intel.GetIntelMetricsSlice(numMetrics)
+	panicIfErr(err)
+	clusterNames, err := i.GetRandomClusters(nClusters)
+	panicIfErr(err)
+
+	pipelineQuery := []bson.M{
+		{
+			"$match": bson.M{
+				"tags.clusterName": bson.M{
+					"$in": clusterNames,
+				},
+				"time": bson.M{
+					"$gte": interval.Start(),
+					"$lt":  interval.End(),
+				},
+			},
+		},
+		{
+			"$group": bson.M{
+				"_id": bson.M{
+					"time": bson.M{
+						"$dateTrunc": bson.M{"date": "$time", "unit": "hour"},
+					},
+					"hostname": "$tags.hostname",
+				},
+			},
+		},
+		{
+			"$sort": bson.D{{"_id.time", 1}, {"_id.hostname", 1}},
+		},
+	}
+	resultMap := pipelineQuery[1]["$group"].(bson.M)
+	for _, metric := range metrics {
+		resultMap["avg_"+metric] = bson.M{"$avg": "$" + metric}
+	}
+
+	humanLabel := fmt.Sprintf("Mongo mean of %d metrics %v clusters for %v hours", numMetrics, nClusters, duration.Hours())
 	q := qi.(*query.Mongo)
 	q.HumanLabel = []byte(humanLabel)
 	q.BsonDoc = pipelineQuery
