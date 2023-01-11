@@ -108,6 +108,23 @@ func (i *Intel) AllMetricsForHosts(qi query.Query, nHosts int, duration time.Dur
 	i.fillInQuery(qi, humanLabel, humanDesc, "intel", sql)
 }
 
+func (i *Intel) AllMetricsForClusters(qi query.Query, nClusters int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+
+	sql := fmt.Sprintf(`
+			SELECT *
+			FROM intel
+			WHERE %s AND (created_at >= '%s') AND (created_at < '%s')
+        `,
+		i.getClusterWhereString(nClusters),
+		interval.Start().Format(clickhouseTimeStringFormat),
+		interval.End().Format(clickhouseTimeStringFormat))
+
+	humanLabel := fmt.Sprintf("ClickHouse all intel metric(s) for random %4d clusters, duration: %s", nClusters, duration)
+	humanDesc := fmt.Sprintf("%s: %s", humanLabel, interval.StartString())
+	i.fillInQuery(qi, humanLabel, humanDesc, "intel", sql)
+}
+
 func (i *Intel) HourlyAvgMetricsForHosts(qi query.Query, numMetrics int, nHosts int, duration time.Duration) {
 	interval := i.Interval.MustRandWindow(duration)
 	metrics, err := intel.GetIntelMetricsSlice(numMetrics)
@@ -129,6 +146,31 @@ func (i *Intel) HourlyAvgMetricsForHosts(qi query.Query, numMetrics int, nHosts 
 		interval.End().Format(clickhouseTimeStringFormat))
 
 	humanLabel := fmt.Sprintf("ClickHouse %d intel metric(s), random %4d hosts, random %s by 1h", numMetrics, nHosts, duration)
+	humanDesc := fmt.Sprintf("%s: %s", humanLabel, interval.StartString())
+	i.fillInQuery(qi, humanLabel, humanDesc, "intel", sql)
+}
+
+func (i *Intel) HourlyAvgMetricsForClusters(qi query.Query, numMetrics int, nClusters int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+	metrics, err := intel.GetIntelMetricsSlice(numMetrics)
+	panicIfErr(err)
+	selectClauses := i.getSelectClausesAggMetrics("avg", metrics)
+
+	sql := fmt.Sprintf(`
+        SELECT
+            toStartOfHour(created_at) AS hour,
+            %s
+        FROM intel
+        WHERE %s AND (created_at >= '%s') AND (created_at < '%s')
+        GROUP BY hour
+        ORDER BY hour ASC
+        `,
+		strings.Join(selectClauses, ", "),
+		i.getClusterWhereString(nClusters),
+		interval.Start().Format(clickhouseTimeStringFormat),
+		interval.End().Format(clickhouseTimeStringFormat))
+
+	humanLabel := fmt.Sprintf("ClickHouse %d intel metric(s), random %4d clusters, random %s by 1h", numMetrics, nClusters, duration)
 	humanDesc := fmt.Sprintf("%s: %s", humanLabel, interval.StartString())
 	i.fillInQuery(qi, humanLabel, humanDesc, "intel", sql)
 }
