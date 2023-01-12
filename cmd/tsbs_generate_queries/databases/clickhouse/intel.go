@@ -235,7 +235,7 @@ func (i *Intel) TopKHostsFromCluster(qi query.Query, nHosts int, duration time.D
 				t.hostname
 			FROM intel
             ANY INNER JOIN tags AS t ON intel.tags_id = t.id 
-			WHERE intel.tags_id IN (%s)
+			WHERE %s
             AND (created_at >= '%s') AND (created_at < '%s')
             GROUP BY t.hostname
             ORDER BY max_mongodb_extra_info_user_time_us DESC
@@ -256,7 +256,7 @@ func (i *Intel) TopKPrimariesFromCluster(qi query.Query, nPrimaries int, duratio
 				t.hostname
 			FROM intel
             ANY INNER JOIN tags AS t ON intel.tags_id = t.id 
-			WHERE intel.tags_id IN (%s)
+			WHERE %s
             AND (created_at >= '%s') AND (created_at < '%s')
 			AND tags.replicaSetState = 'PRIMARY'
             GROUP BY t.hostname
