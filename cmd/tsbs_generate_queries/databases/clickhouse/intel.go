@@ -270,3 +270,29 @@ func (i *Intel) TopKPrimariesFromCluster(qi query.Query, nPrimaries int, duratio
 	humanDesc := humanLabel
 	i.fillInQuery(qi, humanLabel, humanDesc, "intel", sql)
 }
+
+func (i *Intel) CounterRateHost(qi query.Query, nHosts int, duration time.Duration) {
+	interval := i.Interval.MustRandWindow(duration)
+	// insipred from https://github.com/Altinity/clickhouse-grafana
+	sql := fmt.Sprintf(`	SELECT
+    								t,
+    								if(runningDifference(max_mongodb_asserts_regular) < 0, nan, runningDifference(max_mongodb_asserts_regular) / runningDifference(t / 1000)) AS max_mongodb_asserts_regular_PerSecond
+								FROM
+								(           
+											SELECT
+													(intDiv(toUInt32(intel.created_at), 60) * 60) * 1000 AS t,
+													max(intel.mongodb_asserts_regular) AS max_mongodb_asserts_regular
+											FROM intel
+											WHERE %s AND (created_at >= '%s') AND (created_at < '%s')
+											GROUP BY t
+											ORDER BY t  
+								)
+							`,
+		i.getHostWhereString(nHosts),
+		interval.Start().Format(clickhouseTimeStringFormat),
+		interval.End().Format(clickhouseTimeStringFormat),
+	)
+	humanLabel := fmt.Sprintf("Clickhouse top %v hosts for a cluster for %v hours", nHosts, duration.Hours())
+	humanDesc := humanLabel
+	i.fillInQuery(qi, humanLabel, humanDesc, "intel", sql)
+}
