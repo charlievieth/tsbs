@@ -1,9 +1,10 @@
 package devops
 
 import (
-	"github.com/timescale/tsbs/pkg/data"
 	"testing"
 	"time"
+
+	"github.com/timescale/tsbs/pkg/data"
 )
 
 var (

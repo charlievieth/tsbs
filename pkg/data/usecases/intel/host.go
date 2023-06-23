@@ -2,11 +2,12 @@ package intel
 
 import (
 	"fmt"
-	"github.com/timescale/tsbs/pkg/data/usecases/common"
 	"math"
 	"math/rand"
 	"reflect"
 	"time"
+
+	"github.com/timescale/tsbs/pkg/data/usecases/common"
 )
 
 const (

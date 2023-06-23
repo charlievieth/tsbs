@@ -3,9 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"github.com/jackc/pgx/v4"
 	"github.com/timescale/tsbs/pkg/targets"
-	"strings"
 )
 
 type processor struct {

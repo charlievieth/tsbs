@@ -2,9 +2,10 @@ package intel
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/common"
 	"github.com/timescale/tsbs/pkg/query"
-	"time"
 )
 
 const (

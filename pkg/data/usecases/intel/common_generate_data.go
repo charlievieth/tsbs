@@ -1,9 +1,10 @@
 package intel
 
 import (
+	"time"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"time"
 )
 
 // HostContext contains information needed to create a new host

@@ -1,8 +1,9 @@
 package mongo
 
 import (
-	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 	"time"
+
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/devops"
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/utils"

@@ -2,9 +2,10 @@ package victoriametrics
 
 import (
 	"bufio"
+	"log"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"log"
 )
 
 type fileDataSource struct {

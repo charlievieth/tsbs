@@ -2,11 +2,12 @@ package common
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/spf13/pflag"
 	"github.com/timescale/tsbs/internal/utils"
 	"github.com/timescale/tsbs/pkg/targets/constants"
-	"strings"
-	"time"
 )
 
 // Generator is a single entity which generates data from its respective measurements.

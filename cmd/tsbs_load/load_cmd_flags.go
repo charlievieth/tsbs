@@ -2,11 +2,12 @@ package main
 
 import (
 	"fmt"
+	"strings"
+	"time"
+
 	"github.com/spf13/pflag"
 	"github.com/timescale/tsbs/load"
 	"github.com/timescale/tsbs/pkg/data/source"
-	"strings"
-	"time"
 )
 
 const (

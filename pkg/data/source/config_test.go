@@ -2,10 +2,11 @@ package source
 
 import (
 	"fmt"
-	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"github.com/timescale/tsbs/pkg/targets/constants"
 	"testing"
 	"time"
+
+	"github.com/timescale/tsbs/pkg/data/usecases/common"
+	"github.com/timescale/tsbs/pkg/targets/constants"
 )
 
 const (

@@ -38,7 +38,7 @@ var (
 	collectionSharded    bool
 	numInitChunks        uint
 	shardKeySpec         string
-	balancerOn       bool
+	balancerOn           bool
 )
 
 // Global vars
@@ -83,7 +83,7 @@ func init() {
 	} else {
 		config.HashWorkers = true
 	}
-	
+
 	if !documentPer && timeseriesCollection {
 		log.Fatal("Must set document-per-event=true in order to use timeseries-collection=true")
 	}

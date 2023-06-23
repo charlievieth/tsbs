@@ -104,23 +104,24 @@ func (p *aggProcessor) Init(_ int, doLoad, _ bool) {
 // is first encountered)
 //
 // A document is structured like so:
-//  {
-//    "doc_id": "day_x_00",
-//    "key_id": "x_00",
-//    "measurement": "cpu",
-//    "tags": {
-//      "hostname": "host0",
-//      ...
-//    },
-//    "events": [
-//      [
-//        {
-//          "field1": 0.0,
-//          ...
-//		  }
-//      ]
-//    ]
-//  }
+//
+//	 {
+//	   "doc_id": "day_x_00",
+//	   "key_id": "x_00",
+//	   "measurement": "cpu",
+//	   "tags": {
+//	     "hostname": "host0",
+//	     ...
+//	   },
+//	   "events": [
+//	     [
+//	       {
+//	         "field1": 0.0,
+//	         ...
+//			  }
+//	     ]
+//	   ]
+//	 }
 func (p *aggProcessor) ProcessBatch(b targets.Batch, doLoad bool) (uint64, uint64) {
 	docToEvents := make(map[string][]*point)
 	batch := b.(*batch)
@@ -156,14 +157,14 @@ func (p *aggProcessor) ProcessBatch(b targets.Batch, doLoad bool) (uint64, uint6
 					})
 				} else {
 					p.createQueue = append(p.createQueue, bson.D{
-						{aggDocID,      docKey},
-						{aggKeyID,      dateKey},
+						{aggDocID, docKey},
+						{aggKeyID, dateKey},
 						{"measurement", string(event.MeasurementName())},
-						{"tags",        tagsSlice},
-						{"events",      emptyDoc},
+						{"tags", tagsSlice},
+						{"events", emptyDoc},
 					})
 				}
-				
+
 			}
 			p.createdDocs[docKey] = true
 		}

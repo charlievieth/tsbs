@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+
 	"github.com/blagojts/viper"
 	"github.com/timescale/tsbs/load"
 	"github.com/timescale/tsbs/pkg/data/source"

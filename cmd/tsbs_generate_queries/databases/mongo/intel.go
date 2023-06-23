@@ -3,10 +3,11 @@ package mongo
 import (
 	"encoding/gob"
 	"fmt"
+	"time"
+
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 	"github.com/timescale/tsbs/pkg/query"
 	"go.mongodb.org/mongo-driver/bson"
-	"time"
 )
 
 func init() {

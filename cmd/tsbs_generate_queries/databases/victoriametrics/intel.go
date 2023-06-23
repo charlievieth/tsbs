@@ -2,10 +2,11 @@ package victoriametrics
 
 import (
 	"fmt"
-	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
-	"github.com/timescale/tsbs/pkg/query"
 	"strings"
 	"time"
+
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
+	"github.com/timescale/tsbs/pkg/query"
 )
 
 // Intel produces ClickHouse-specific queries for all the Intel query types.

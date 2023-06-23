@@ -1,7 +1,6 @@
 package query
 
 import (
-	"golang.org/x/time/rate"
 	"io/ioutil"
 	"math"
 	"os"
@@ -9,6 +8,8 @@ import (
 	"strings"
 	"sync"
 	"testing"
+
+	"golang.org/x/time/rate"
 )
 
 type testProcessor struct {

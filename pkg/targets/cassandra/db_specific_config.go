@@ -1,8 +1,9 @@
 package cassandra
 
 import (
-	"github.com/blagojts/viper"
 	"time"
+
+	"github.com/blagojts/viper"
 )
 
 type SpecificConfig struct {

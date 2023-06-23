@@ -2,10 +2,11 @@ package victoriametrics
 
 import (
 	"fmt"
-	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 	"net/url"
 	"strconv"
 	"time"
+
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
 
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/devops"
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/utils"

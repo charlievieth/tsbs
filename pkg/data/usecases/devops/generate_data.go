@@ -1,9 +1,10 @@
 package devops
 
 import (
+	"time"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"time"
 )
 
 // DevopsSimulator generates data similar to telemetry, with metrics from a variety of device systems.

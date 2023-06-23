@@ -1,9 +1,10 @@
 package devops
 
 import (
+	"time"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"time"
 )
 
 // A CPUOnlySimulator generates data similar to telemetry from Telegraf for only CPU metrics.

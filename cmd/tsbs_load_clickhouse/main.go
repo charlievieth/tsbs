@@ -5,6 +5,7 @@ package main
 
 import (
 	"fmt"
+
 	"github.com/blagojts/viper"
 	"github.com/spf13/pflag"
 	"github.com/timescale/tsbs/internal/utils"

@@ -3,6 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"strings"
+
 	"github.com/blagojts/viper"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
@@ -11,7 +13,6 @@ import (
 	"github.com/timescale/tsbs/pkg/targets/constants"
 	"github.com/timescale/tsbs/pkg/targets/initializers"
 	"gopkg.in/yaml.v2"
-	"strings"
 )
 
 const (

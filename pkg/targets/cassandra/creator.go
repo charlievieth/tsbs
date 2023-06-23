@@ -2,10 +2,11 @@ package cassandra
 
 import (
 	"fmt"
-	"github.com/gocql/gocql"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/gocql/gocql"
 )
 
 // Map of user specified strings to gocql consistency settings

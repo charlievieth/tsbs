@@ -1,13 +1,14 @@
 package cassandra
 
 import (
+	"time"
+
 	"github.com/blagojts/viper"
 	"github.com/spf13/pflag"
 	"github.com/timescale/tsbs/pkg/data/serialize"
 	"github.com/timescale/tsbs/pkg/data/source"
 	"github.com/timescale/tsbs/pkg/targets"
 	"github.com/timescale/tsbs/pkg/targets/constants"
-	"time"
 )
 
 func NewTarget() targets.ImplementedTarget {

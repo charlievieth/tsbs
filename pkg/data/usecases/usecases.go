@@ -2,12 +2,13 @@ package usecases
 
 import (
 	"fmt"
+	"math"
+
 	"github.com/timescale/tsbs/internal/utils"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
 	"github.com/timescale/tsbs/pkg/data/usecases/devops"
 	"github.com/timescale/tsbs/pkg/data/usecases/intel"
 	"github.com/timescale/tsbs/pkg/data/usecases/iot"
-	"math"
 )
 
 const errCannotParseTimeFmt = "cannot parse time from string '%s': %v"

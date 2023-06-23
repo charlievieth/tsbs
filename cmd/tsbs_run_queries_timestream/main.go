@@ -9,9 +9,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"time"
+
 	"github.com/aws/aws-sdk-go/service/timestreamquery"
 	"github.com/timescale/tsbs/pkg/targets/timestream"
-	"time"
 
 	"github.com/blagojts/viper"
 	_ "github.com/jackc/pgx/v4/stdlib"

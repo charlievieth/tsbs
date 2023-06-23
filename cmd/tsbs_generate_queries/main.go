@@ -4,10 +4,11 @@ package main
 
 import (
 	"fmt"
-	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
-	"github.com/timescale/tsbs/pkg/query/config"
 	"os"
 	"time"
+
+	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/intel"
+	"github.com/timescale/tsbs/pkg/query/config"
 
 	"github.com/blagojts/viper"
 	"github.com/spf13/pflag"

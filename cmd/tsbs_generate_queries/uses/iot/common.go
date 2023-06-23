@@ -2,9 +2,10 @@ package iot
 
 import (
 	"fmt"
-	"github.com/timescale/tsbs/pkg/data/usecases/iot"
 	"math/rand"
 	"time"
+
+	"github.com/timescale/tsbs/pkg/data/usecases/iot"
 
 	"github.com/timescale/tsbs/cmd/tsbs_generate_queries/uses/common"
 	"github.com/timescale/tsbs/pkg/query"

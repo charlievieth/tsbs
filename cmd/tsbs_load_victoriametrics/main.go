@@ -3,14 +3,15 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"strings"
+
 	"github.com/blagojts/viper"
 	"github.com/spf13/pflag"
 	"github.com/timescale/tsbs/internal/utils"
 	"github.com/timescale/tsbs/load"
 	"github.com/timescale/tsbs/pkg/data/source"
 	"github.com/timescale/tsbs/pkg/targets/victoriametrics"
-	"log"
-	"strings"
 )
 
 // Parse args:

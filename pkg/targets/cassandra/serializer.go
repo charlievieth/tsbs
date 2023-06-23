@@ -2,9 +2,10 @@ package cassandra
 
 import (
 	"fmt"
+	"io"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/serialize"
-	"io"
 )
 
 // Serializer writes a Point in a serialized form for Cassandra

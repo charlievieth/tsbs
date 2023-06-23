@@ -1,12 +1,13 @@
 package timestream
 
 import (
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"golang.org/x/net/http2"
 	"net"
 	"net/http"
 	"time"
+
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"golang.org/x/net/http2"
 )
 
 func OpenAWSSession(awsRegion *string, timeout time.Duration) (*session.Session, error) {

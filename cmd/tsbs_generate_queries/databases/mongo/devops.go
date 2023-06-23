@@ -287,7 +287,7 @@ func (d *Devops) GroupByTimeAndPrimaryTag(qi query.Query, numMetrics int) {
 	pipelineQuery = append(pipelineQuery, group)
 
 	// Add sort operators
-	sort := bson.M{"$sort": bson.D{{ "_id.time",1}, {"_id.hostname", 1}}}
+	sort := bson.M{"$sort": bson.D{{"_id.time", 1}, {"_id.hostname", 1}}}
 	pipelineQuery = append(pipelineQuery, sort)
 
 	humanLabel := devops.GetDoubleGroupByLabel("Mongo", numMetrics)

@@ -1,9 +1,10 @@
 package intel
 
 import (
+	"time"
+
 	"github.com/timescale/tsbs/pkg/data"
 	"github.com/timescale/tsbs/pkg/data/usecases/common"
-	"time"
 )
 
 // It fulfills the Simulator interface.
